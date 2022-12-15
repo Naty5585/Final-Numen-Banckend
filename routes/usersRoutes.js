@@ -1,30 +1,23 @@
 const express = require('express')
 const { check } = require('express-validator')
-const { validateId } = require('../middlewares/validateId')
+const { validateIdUser } = require('../middlewares/usersValidateId')
 const userRouter = express.Router()
 const controller = require('../controllers/userController')
 const authJWT = require('../middlewares/authJWT')
 const authSession = require('../middlewares/authSession')
 
 
-/* GET users listing. */
-userRouter.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
-
 //GET
 //ver todos
 userRouter.get('/allusers', authSession, authJWT, controller.allUsers)
 //ver un usuario
-userRouter.get('/user/:id', authSession, authJWT, validateId, controller.user)
+userRouter.get('/user/:id', authSession, authJWT, validateIdUser, controller.user)
 //logs
 userRouter.get('/logs', authSession, authJWT, controller.allLogs)
 //user logs
-userRouter.get('/log/:id', authSession, authJWT, validateId, controller.userLogs)
+userRouter.get('/log/:id', authSession, authJWT, validateIdUser, controller.userLogs)
 //consultar cookie
 userRouter.get('/cookie', controller.consultarCookie)
-//consulta axios
-userRouter.get('/axios', controller.consultaAxios)
 
 //POST
 //registrar
@@ -41,15 +34,14 @@ userRouter.post('/login', [
 
 //PUT
 //editar
-userRouter.put('/editpassword/:id', authSession, authJWT, validateId, [
+userRouter.put('/editpassword/:id', authSession, authJWT, validateIdUser, [
   check("password").not().isEmpty().withMessage("El campo esta vacio").isLength({ min: 8, max: 15 }).withMessage("La contraseña debe contener entre 8 y 15 caracteres."),
 ], controller.editPassword)
 
 //DELETE
 //borrar usuario
-userRouter.delete('/delete/:id', authSession, authJWT, validateId, controller.deleteUser)
+userRouter.delete('/delete/:id', authSession, authJWT, validateIdUser, controller.deleteUser)
 //logout
 userRouter.delete('/logout', authSession, authJWT, controller.logout)
-
 
 module.exports = userRouter;

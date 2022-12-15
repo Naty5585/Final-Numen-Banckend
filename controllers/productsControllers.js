@@ -3,7 +3,7 @@ const { validationResult } = require('express-validator')
 
 const controllers = {
 
-  newProduct: async (req,res) => {
+newProduct: async (req,res) => {
     try {
       const err = validationResult(req)
       if (err.isEmpty()) {
@@ -16,7 +16,7 @@ const controllers = {
     } catch (error) {
       res.status(501).json({error})
     }
-  },
+},
 
 allProducts: async (req,res) => {
   const items = await Product.find()

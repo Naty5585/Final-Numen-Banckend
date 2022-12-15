@@ -1,12 +1,12 @@
 const express = require('express');
 const productRouter = express.Router()
 const controller = require('../controllers/productsControllers')
-const { validateId } = require('../middlewares/validateId')
+const { validateIdProduct } = require('../middlewares/productValidateId')
 const { check } = require('express-validator')
 
 //GET
 productRouter.get('/list', controller.allProducts)
-productRouter.get('/view/:id', validateId, controller.viewProduct)
+productRouter.get('/view/:id', validateIdProduct, controller.viewProduct)
 
 //POST
 productRouter.post('/new', [
@@ -24,7 +24,7 @@ productRouter.post('/new', [
 ], controller.newProduct)
 
 //PUT
-productRouter.put('/edit/:id', validateId, [
+productRouter.put('/edit/:id', validateIdProduct, [
   check('marca').not().isEmpty().withMessage('El campo marca es obligatorio'),
   check('modelo').not().isEmpty().withMessage('El campo modelo es obligatorio').isLength({min:2, max:17}).withMessage('El campo debe tener mas de 2 letras y menos de 17'),
   check('pantalla').not().isEmpty().withMessage('El campo pantalla es obligatorio'),
@@ -39,6 +39,6 @@ productRouter.put('/edit/:id', validateId, [
 ], controller.editProduct)
 
 //DELETE
-productRouter.delete('/delete/:id', validateId, controller.deleteProduct)
+productRouter.delete('/delete/:id', validateIdProduct, controller.deleteProduct)
 
 module.exports = productRouter

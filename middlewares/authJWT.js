@@ -3,7 +3,7 @@ require("dotenv").config()
 const { User } = require("../models/user")
 
 module.exports = authJWT = async (req, res, next) => {
-  const token = req.headers["x-token"] //|| req.cookies.usuarioEnSesion.token
+  const token = req.headers["x-token"] || req.cookies.usuarioEnSesion.token
   if (!token) {
     return res.status(401).json({msg: "No hay token en la peticion",})
   }
@@ -13,7 +13,7 @@ module.exports = authJWT = async (req, res, next) => {
     const user = await User.findById(body.id)
     if (user === null) {
       return res.status(401).json({
-        msg: "Este token no es mío",
+        msg: "Este token no pertenece a este ID",
       });
     }
     next();

@@ -1,9 +1,9 @@
-const { Product } = require('../models/products')
+const { User } = require('../models/user')
 
 
-const validateId = async (req, res, next) => {
+const validateIdUser = async (req, res, next) => {
   try {
-    const item = await Product.findById(req.params.id)
+    const item = await User.findById(req.params.id)
     if (item!== null) {
         next()
     } else {
@@ -15,4 +15,4 @@ const validateId = async (req, res, next) => {
   
 }
 
-module.exports = { validateId }
+module.exports = { validateIdUser }

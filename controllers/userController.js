@@ -6,7 +6,7 @@ const generateJWT = require('../helpers/generateJWT')
 const axios = require('axios')
 
 const controllers = {
-  //REGISTRO NUEVO USUARIO
+//REGISTRO NUEVO USUARIO
 newUser: async (req, res) => {
   try {
     const error = validationResult(req)
@@ -47,7 +47,7 @@ editPassword: async (req,res) => {
   try {
     const error = validationResult(req)
     if (error.isEmpty()) {
-      const {id} = req.params
+      const {id} = req.params;
 
       let salt = bcrypt.genSaltSync(10)
       let newPassword = bcrypt.hashSync(req.body.password, salt)
@@ -76,10 +76,12 @@ login: async (req, res) => {
   if (error.isEmpty()) {
     const usuario = await User.findOne({ email: req.body.email })
     // Validaciones
-    usuario == null &&
+    if(usuario == null) {
       res.status(401).json({ msg: "El email o la contraseña son incorrectos" })
-    !bcrypt.compareSync(req.body.password, usuario.password) &&
+    }
+    if(!bcrypt.compareSync(req.body.password, usuario.password)){
       res.status(401).json({ msg: "El email o la contraseña son incorrectos" })
+    }
     // Token
     const token = await generateJWT({
       id: usuario._id,
@@ -92,9 +94,12 @@ login: async (req, res) => {
       email: usuario.email,
       token: token,
     }
-    //COOKIE 
-    res.cookie('usuarioEnSesion', userSession, {maxAge: 60000 * 60 * 24 * 60})
-    req.session.user = userSession
+    //Guardar sesion
+    req.session.usuario = userSession
+    if(req.body.remember) {
+      //COOKIE 
+      res.cookie('usuarioEnSesion', userSession, {maxAge: 60000 * 60 * 24 * 60})
+    }
     // Guardar historial de login
     const saveLogs = new Log({
       type: 'login',
@@ -139,10 +144,10 @@ userLogs: async (req, res) => {
   const userLogs = await Log.find({ userId: req.params.id })
   res.status(200).json({ userLogs })
 },
+//CONSULTA AXIOS 
 consultaAxios: async (req, res) => {
   try {
-    const respuesta = await axios.get(
-      "https://pokeapi.co/api/v2/pokemon/"+ req.params.name, {timeout: 30000})
+    const respuesta = await axios.get ("https://pokeapi.co/api/v2/pokemon/"+ req.params.name, { timeout: 60000})
       res.json({status: respuesta.status, data: respuesta.data})
   } catch (error) {
     res.json({status: error.response.status, data: error.response.data})
